@@ -64,16 +64,34 @@ const Dashboard: React.FC = () => {
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem('sbp_admin_token');
-      await fetch('https://sbpapi-production.up.railway.app/auth/logout', {
+      await fetch('https://sbpapi-production.up.railway.app/admin/logout', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       });
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error('Erreur lors de la déconnexion:', error);
     } finally {
       localStorage.removeItem('sbp_admin_token');
       window.location.href = '/login';
     }
+  };
+
+  const checkAuth = (): boolean => {
+    const token = localStorage.getItem('sbp_admin_token');
+    const isAuthenticated = !!token;
+    
+    if (!isAuthenticated) {
+      setStats({
+        isAuthenticated: false,
+        admin: null,
+      });
+    }
+    
+    return isAuthenticated;
+  };
+
+  const clearError = (): void => {
+    setStats({ error: null });
   };
 
   if (loading) {

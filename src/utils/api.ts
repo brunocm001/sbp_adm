@@ -1,3 +1,5 @@
+import { apiClient, Admin } from '../utils/api';
+
 const API_BASE_URL = 'https://sbpapi-production.up.railway.app';
 
 export interface ApiResponse<T = any> {
@@ -142,7 +144,7 @@ class ApiClient {
 
   // Authentication
   async login(email: string, password: string): Promise<ApiResponse<{ token: string; admin: Admin }>> {
-    return this.request('/auth/login', {
+    return this.request('/admin/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
