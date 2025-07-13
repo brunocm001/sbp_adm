@@ -73,6 +73,15 @@ import Layout from '../layouts/Layout.astro';
     const errorMessage = document.getElementById('errorMessage');
     const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
     
+    // Validation des champs
+    if (!username || !password) {
+      if (errorMessage) {
+        errorMessage.textContent = 'Veuillez remplir tous les champs';
+        errorMessage.classList.remove('hidden');
+      }
+      return;
+    }
+    
     // Reset error message
     if (errorMessage) {
       errorMessage.classList.add('hidden');
@@ -90,15 +99,23 @@ import Layout from '../layouts/Layout.astro';
     `;
     
     try {
+      const payload = { username, password };
+      console.log('Sending payload:', payload);
+      
       const response = await fetch('https://sbpapi-production.up.railway.app/admin/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify(payload),
       });
       
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+      
       const data = await response.json();
+      console.log('Response data:', data);
       
       if (response.ok && data.success) {
         // Store token
@@ -106,9 +123,18 @@ import Layout from '../layouts/Layout.astro';
         // Redirect to dashboard
         window.location.href = '/';
       } else {
-        throw new Error(data.message || 'Échec de la connexion');
+        // Gérer les erreurs Pydantic
+        if (data.detail && Array.isArray(data.detail)) {
+          const errorMessages = data.detail.map((error: any) => 
+            `${error.loc.join('.')}: ${error.msg}`
+          ).join(', ');
+          throw new Error(errorMessages);
+        } else {
+          throw new Error(data.message || data.detail || 'Échec de la connexion');
+        }
       }
     } catch (error) {
+      console.error('Login error:', error);
       if (errorMessage) {
         errorMessage.textContent = error instanceof Error ? error.message : 'Une erreur est survenue';
         errorMessage.classList.remove('hidden');
