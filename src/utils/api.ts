@@ -146,13 +146,37 @@ class ApiClient {
     formData.append('username', username);
     formData.append('password', password);
     
-    return this.request('/admin/login', {
+    const response = await this.request<any>('/admin/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: formData.toString(),
     });
+
+    // Adapter la réponse au format attendu par l'application
+    if (response.access_token) {
+      return {
+        success: true,
+        data: {
+          token: response.access_token,
+          admin: {
+            id: '1', // Ces données devront être récupérées séparément
+            email: username,
+            name: username,
+            role: 'admin' as const,
+            isActive: true,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          }
+        }
+      };
+    }
+
+    return {
+      success: false,
+      message: 'Token non reçu dans la réponse'
+    };
   }
 
   async logout(): Promise<ApiResponse> {
