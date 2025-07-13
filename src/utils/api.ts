@@ -1,5 +1,3 @@
-import { apiClient, Admin } from '../utils/api';
-
 const API_BASE_URL = 'https://sbpapi-production.up.railway.app';
 
 export interface ApiResponse<T = any> {
