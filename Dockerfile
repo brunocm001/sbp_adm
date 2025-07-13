@@ -14,7 +14,7 @@ COPY tailwind.config.mjs ./
 COPY tsconfig.json ./
 
 # Installer les dépendances
-RUN npm ci --only=production
+RUN npm install --only=production
 
 # Copier le code source
 COPY . .
@@ -40,7 +40,7 @@ COPY --from=base /app/package*.json ./
 COPY --from=base /app/astro.config.mjs ./
 
 # Installer seulement les dépendances de production
-RUN npm ci --only=production && npm cache clean --force
+RUN npm install --only=production && npm cache clean --force
 
 # Copier les fichiers buildés
 COPY --from=base /app/dist ./dist
