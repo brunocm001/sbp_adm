@@ -141,10 +141,10 @@ class ApiClient {
   }
 
   // Authentication
-  async login(email: string, password: string): Promise<ApiResponse<{ token: string; admin: Admin }>> {
+  async login(username: string, password: string): Promise<ApiResponse<{ token: string; admin: Admin }>> {
     return this.request('/admin/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ username, password }),
     });
   }
 
