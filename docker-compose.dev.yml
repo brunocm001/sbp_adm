@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  sbp-admin-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    container_name: sbp-admin-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=3000
+      - PUBLIC_API_URL=https://sbpapi-production.up.railway.app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - sbp-dev-network
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3000"]
+
+networks:
+  sbp-dev-network:
+    driver: bridge 
