@@ -142,9 +142,16 @@ class ApiClient {
 
   // Authentication
   async login(username: string, password: string): Promise<ApiResponse<{ token: string; admin: Admin }>> {
+    const formData = new URLSearchParams();
+    formData.append('username', username);
+    formData.append('password', password);
+    
     return this.request('/admin/login', {
       method: 'POST',
-      body: JSON.stringify({ username, password }),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData.toString(),
     });
   }
 
